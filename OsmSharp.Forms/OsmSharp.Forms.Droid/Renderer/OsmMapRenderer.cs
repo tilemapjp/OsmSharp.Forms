@@ -22,7 +22,7 @@ namespace OsmSharp.Forms.Android
 
             // Create new Map and MapView
             var map = new Map();
-            var mapView = new MapView(this.Context, new MapViewSurface(this.Context));
+            var mapView = new MapView(Context, new MapViewSurface(this.Context));
 
             // Measure only visible objects
             mapView.SetMeasureAllChildren(false);

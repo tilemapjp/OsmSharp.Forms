@@ -1,25 +1,15 @@
 ﻿using OsmSharp.Forms.Extensions;
-using OsmSharp.Osm;
 using OsmSharp.Osm.Data.Memory;
-using OsmSharp.Osm.PBF.Streams;
 using OsmSharp.UI.Map.Layers;
 using OsmSharp.UI.Map.Styles.MapCSS;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
-using OsmSharp.Math.Geo.Projections;
-using OsmSharp.UI.Renderer;
 using OsmSharp.UI;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using OsmSharp.Math.Geo;
-using OsmSharp.UI.Animations;
 
 namespace OsmSharp.Forms
 {
@@ -44,12 +34,12 @@ namespace OsmSharp.Forms
         /// <summary>
         /// The used MapView for this view (contains the UIView/ViewGroup)
         /// </summary>
-        private OsmSharp.UI.IMapView mapView;
+        private IMapView mapView;
 
         /// <summary>
         /// MapView property
         /// </summary>
-        public OsmSharp.UI.IMapView MapView
+        public IMapView MapView
         {
             get
             {
@@ -65,12 +55,12 @@ namespace OsmSharp.Forms
         /// <summary>
         /// The used Map (containing the layers)
         /// </summary>
-        private OsmSharp.UI.Map.Map map;
+        private UI.Map.Map map;
 
         /// <summary>
         /// Map property
         /// </summary>
-        public OsmSharp.UI.Map.Map Map
+        public UI.Map.Map Map
         {
             get
             {
@@ -94,7 +84,7 @@ namespace OsmSharp.Forms
             get { return (string)GetValue(TileUrlStreetProperty); }
             set
             {
-                this.SetValue(TileUrlStreetProperty, value);
+                SetValue(TileUrlStreetProperty, value);
 
                 // If active map is tile map, than clear it and update the tile layer
                 if (!string.IsNullOrEmpty(tileUrl) && MapType == MapType.Street)
@@ -122,7 +112,7 @@ namespace OsmSharp.Forms
             get { return (string)GetValue(TileUrlSatelliteProperty); }
             set
             {
-                this.SetValue(TileUrlSatelliteProperty, value);
+                SetValue(TileUrlSatelliteProperty, value);
 
                 // If active map is tile map, than clear it and update the tile layer
                 if (!string.IsNullOrEmpty(tileUrl) && MapType == MapType.Satellite)
@@ -150,7 +140,7 @@ namespace OsmSharp.Forms
             get { return (string)GetValue(TileUrlHybridProperty); }
             set
             {
-                this.SetValue(TileUrlHybridProperty, value);
+                SetValue(TileUrlHybridProperty, value);
 
                 // If active map is tile map, than clear it and update the tile layer
                 if (!string.IsNullOrEmpty(tileUrl) && MapType == MapType.Hybrid)
@@ -177,7 +167,7 @@ namespace OsmSharp.Forms
         {
             get
             {
-                var result = (MapSpan)this.GetValue(MapCenterProperty);
+                var result = (MapSpan)GetValue(MapCenterProperty);
 
                 if (mapView != null && mapView.MapCenter != null && mapView.MapBoundingBox != null)
                     return result ?? new MapSpan(mapView.MapCenter.ToPosition(), mapView.MapBoundingBox.MaxLat - mapView.MapBoundingBox.MinLat, mapView.MapBoundingBox.MaxLon - mapView.MapBoundingBox.MinLon);
@@ -186,7 +176,7 @@ namespace OsmSharp.Forms
             }
             set
             {
-                this.SetValue(MapCenterProperty, value);
+                SetValue(MapCenterProperty, value);
 
                 if (mapView != null)
                 {
@@ -206,10 +196,10 @@ namespace OsmSharp.Forms
         /// </summary>
         public bool HasScrollEnabled
         {
-            get { return (bool)this.GetValue(HasScrollEnabledProperty); }
+            get { return (bool)GetValue(HasScrollEnabledProperty); }
             set
             {
-                this.SetValue(HasScrollEnabledProperty, value);
+                SetValue(HasScrollEnabledProperty, value);
 
                 if (mapView != null)
                     mapView.MapAllowPan = value;
@@ -226,10 +216,10 @@ namespace OsmSharp.Forms
         /// </summary>
         public bool HasZoomEnabled
         {
-            get { return (bool)this.GetValue(HasZoomEnabledProperty); }
+            get { return (bool)GetValue(HasZoomEnabledProperty); }
             set
             {
-                this.SetValue(HasZoomEnabledProperty, value);
+                SetValue(HasZoomEnabledProperty, value);
 
                 if (mapView != null)
                     mapView.MapAllowZoom = value;
@@ -241,15 +231,36 @@ namespace OsmSharp.Forms
         /// </summary>
         public static readonly BindableProperty HasZoomEnabledProperty = BindableProperty.Create(nameof(HasZoomEnabled), typeof(bool), typeof(OsmMap), true);
 
-        /// <summary>
-        /// Gets/Sets the flag for showing position of user on map.
-        /// </summary>
-        public bool IsShowingUser
+		/// <summary>
+		/// Gets/Sets the flag for tilting the map.
+		/// </summary>
+		public bool HasTiltEnabled
+		{
+			get { return (bool)GetValue(HasTiltEnabledProperty); }
+			set
+			{
+				SetValue(HasTiltEnabledProperty, value);
+
+				if (mapView != null)
+					mapView.MapAllowTilt = value;
+			}
+		}
+
+		/// <summary>
+		/// Bindable Property of <see cref="HasTiltEnabled"/>
+		/// </summary>
+		public static readonly BindableProperty HasTiltEnabledProperty = BindableProperty.Create(nameof(HasTiltEnabled), typeof(bool), typeof(OsmMap), true);
+
+
+		/// <summary>
+		/// Gets/Sets the flag for showing position of user on map.
+		/// </summary>
+		public bool IsShowingUser
         {
-            get { return (bool)this.GetValue(IsShowingUserProperty); }
+            get { return (bool)GetValue(IsShowingUserProperty); }
             set
             {
-                this.SetValue(IsShowingUserProperty, value);
+                SetValue(IsShowingUserProperty, value);
 
                 if (mapView != null)
                 {
@@ -300,8 +311,8 @@ namespace OsmSharp.Forms
         /// </summary>
         public bool IsShowingUserInCenter
         {
-            get { return (bool)this.GetValue(IsShowingUserInCenterProperty); }
-            set { this.SetValue(IsShowingUserInCenterProperty, value); }
+            get { return (bool)GetValue(IsShowingUserInCenterProperty); }
+            set { SetValue(IsShowingUserInCenterProperty, value); }
         }
 
         /// <summary>
@@ -314,10 +325,10 @@ namespace OsmSharp.Forms
         /// </summary>
         public MapType MapType
         {
-            get { return (MapType)this.GetValue(MapTypeProperty); }
+            get { return (MapType)GetValue(MapTypeProperty); }
             set
             {
-                this.SetValue(MapTypeProperty, value);
+                SetValue(MapTypeProperty, value);
 
                 var newUrl = "";
 
@@ -446,9 +457,9 @@ namespace OsmSharp.Forms
                 // Set some initial values
                 mapView.MapTilt = 0;
                 mapView.MapZoom = 14;
-                mapView.MapAllowTilt = false;
+                mapView.MapAllowTilt = true;
 
-                MapCenter = new MapSpan(new Math.Geo.GeoCoordinate(48.487, 9.215).ToPosition(), 
+                MapCenter = new MapSpan(new GeoCoordinate(48.487, 9.215).ToPosition(), 
                     360.0/System.Math.Pow(2, System.Math.Ceiling(mapView.MapZoom)), 
                     360.0/System.Math.Pow(2, System.Math.Ceiling(mapView.MapZoom)));
 
@@ -478,10 +489,10 @@ namespace OsmSharp.Forms
             }
         }
 
-        protected override SizeRequest OnSizeRequest(double widthConstrain, double heightConstrain)
+        protected override SizeRequest OnSizeRequest(double widthConstraint, double heightConstraint)
         {
-            var maxWidth = widthConstrain;
-            var maxHeight = heightConstrain;
+            var maxWidth = widthConstraint;
+            var maxHeight = heightConstraint;
 
             if (double.IsPositiveInfinity(maxWidth))
                 maxWidth = ((View)Parent).Width;
