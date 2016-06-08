@@ -145,7 +145,7 @@
     </ProjectReference>
     <ProjectReference Include="..\OsmSharp.Forms\OSMSharp.Forms.Droid\OSMSharp.Forms.Droid.csproj">
       <Project>{48671621-A24F-4945-AC77-D8B68E0E5B29}</Project>
-      <Name>OsmSharp.Forms.Droid</Name>
+      <Name>OSMSharp.Forms.Droid</Name>
     </ProjectReference>
     <ProjectReference Include="..\OsmSharp.Forms\OsmSharp.Forms\OsmSharp.Forms.csproj">
       <Project>{0C5E136B-06CF-4BBE-B6F4-9EE98DCF2BAC}</Project>
