@@ -446,7 +446,7 @@ namespace OsmSharp.Forms
                 // Set some initial values
                 mapView.MapTilt = 0;
                 mapView.MapZoom = 14;
-                mapView.MapAllowTilt = false;
+                mapView.MapAllowTilt = true;
 
                 MapCenter = new MapSpan(new Math.Geo.GeoCoordinate(48.487, 9.215).ToPosition(), 
                     360.0/System.Math.Pow(2, System.Math.Ceiling(mapView.MapZoom)), 
